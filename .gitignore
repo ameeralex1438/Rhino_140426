@@ -41,3 +41,8 @@ yarn-error.log*
 next-env.d.ts
 public/images/video/plant-drone/
 public/images/video/plant-tour-full.mp4
+
+# build output
+/out/
+rhino-website.zip
+rhino-website/

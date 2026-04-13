@@ -192,7 +192,7 @@ function VariantLayer({
           </div>
 
           {/* ---- CENTER: Product image ---- */}
-          <div className="relative flex w-[40%] shrink-0 items-center justify-center md:w-[40%]">
+          <div className="relative flex w-full shrink-0 items-center justify-center md:w-[40%]">
             {/* Colored glow */}
             <div
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%]"
@@ -219,7 +219,7 @@ function VariantLayer({
                 <img
                   src={variant.image}
                   alt={variant.fullName}
-                  className="relative h-[24vh] w-auto object-contain md:h-[28vh] lg:h-[34vh]"
+                  className="relative h-[32vh] w-auto object-contain md:h-[28vh] lg:h-[34vh]"
                   style={{ filter: `drop-shadow(0 16px 32px ${variant.color}1a)` }}
                 />
               )}
@@ -274,18 +274,20 @@ function VariantLayer({
 
       {/* ---- Mobile specs ---- */}
       <div
-        className="flex shrink-0 flex-wrap justify-center gap-4 px-4 md:hidden"
+        className="flex shrink-0 justify-center px-4 md:hidden"
         style={{
           opacity: active ? 1 : 0,
           transition: `opacity .4s ${ease} 400ms`,
         }}
       >
-        {[...variant.leftSpecs, ...variant.rightSpecs].slice(0, 4).map((s) => (
-          <div key={s.label} className="flex flex-col items-center">
-            <span className="font-display text-sm font-bold" style={{ color: variant.color }}>{s.value}</span>
-            <span className="text-[8px] uppercase tracking-wider text-[#777]">{s.label}</span>
-          </div>
-        ))}
+        <div className="grid grid-cols-3 gap-6">
+          {[...variant.leftSpecs, ...variant.rightSpecs].slice(0, 3).map((s) => (
+            <div key={s.label} className="flex flex-col items-center text-center">
+              <span className="font-display text-base font-bold" style={{ color: variant.color }}>{s.value}</span>
+              <span className="mt-0.5 text-[9px] uppercase tracking-wider text-[#777]">{s.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* =========== BOTTOM: Description + CO₂ + CTA =========== */}
@@ -370,15 +372,18 @@ export function VariantsSection() {
     }
   });
 
+  const isTouchDevice = typeof window !== "undefined" && "ontouchstart" in window;
+
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (isTouchDevice) return;
     setMousePos({
       x: (e.clientX / window.innerWidth - 0.5) * 2,
       y: (e.clientY / window.innerHeight - 0.5) * 2,
     });
-  }, []);
+  }, [isTouchDevice]);
 
   return (
-    <section ref={sectionRef} className="relative h-[300vh]">
+    <section ref={sectionRef} className="relative h-[200vh] md:h-[300vh]">
       <div
         className="sticky top-0 flex h-dvh flex-col items-center bg-white"
         onMouseMove={handleMouseMove}
