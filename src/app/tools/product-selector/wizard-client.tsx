@@ -548,8 +548,14 @@ function ResultCard({
   variant: (typeof productVariants)[number];
 }) {
   const specs = product.specs;
-  const image = PRODUCT_IMAGE_MAP[product.id] ?? "/images/products/product-1.jpeg";
   const variantImage = VARIANT_IMAGE_MAP[variant.id] ?? "/images/products/elite.avif";
+
+  const VARIANT_NOBG_MAP: Record<string, string> = {
+    elite: "/images/products/elite-nobg.png",
+    enduro: "/images/products/enduro-nobg.png",
+    "eco-green": "/images/products/ecogreen-nobg.png",
+  };
+  const heroImage = VARIANT_NOBG_MAP[variant.id] ?? "/images/products/elite-nobg.png";
 
   const specGrid = [
     {
@@ -583,15 +589,15 @@ function ResultCard({
         <div className="card-shine overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-2xl shadow-black/5">
           <div className="grid gap-0 md:grid-cols-2">
             {/* Left — image */}
-            <div className="relative h-64 overflow-hidden bg-gray-50 md:h-full md:min-h-[420px]">
+            <div className="relative h-72 overflow-hidden bg-[#FAFAF8] md:h-full md:min-h-[420px]">
               <Image
-                src={image}
-                alt={product.name}
+                src={heroImage}
+                alt={`${variant.name} - ${product.name}`}
                 fill
-                className="object-cover"
+                className="object-contain p-6 md:p-10"
               />
               {/* Radial glow overlay */}
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,rgba(255,102,0,0.15),transparent_70%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,rgba(255,102,0,0.08),transparent_70%)]" />
 
               {/* Variant badge */}
               <div className="absolute bottom-4 left-4 flex items-center gap-3 rounded-2xl border border-white/20 bg-black/60 px-4 py-3 backdrop-blur-md">
@@ -607,9 +613,7 @@ function ResultCard({
                     {variant.name}
                   </p>
                   <p className="text-xs text-white/60">
-                    {variant.status === "available"
-                      ? "Available Now"
-                      : `Coming ${variant.status}`}
+                    Available Now
                   </p>
                 </div>
               </div>

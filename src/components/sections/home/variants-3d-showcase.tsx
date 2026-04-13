@@ -303,12 +303,12 @@ function VariantLayer({
 
         <div className="flex items-center gap-3">
           <span className="text-xs uppercase tracking-wider text-[#888]">CO&#x2082;</span>
-          <div className="h-1 w-32 overflow-hidden rounded-full bg-[#e5e5e5] md:w-40">
+          <div className="h-1.5 w-32 overflow-hidden rounded-full md:w-40" style={{ backgroundColor: `${variant.color}25` }}>
             <div
               className="h-full rounded-full"
               style={{
                 background: variant.color,
-                width: active ? `${variant.carbonReduction}%` : "0%",
+                width: active ? `${100 - variant.carbonReduction}%` : "100%",
                 transition: `width .8s ${ease} .6s`,
               }}
             />
