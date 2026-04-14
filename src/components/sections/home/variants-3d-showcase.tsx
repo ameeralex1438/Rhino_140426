@@ -105,8 +105,9 @@ function VariantLayer({
       className="absolute inset-0 flex flex-col"
       style={{
         opacity: active ? 1 : 0,
-        transition: "opacity .4s ease",
+        transition: "opacity .3s ease",
         pointerEvents: active ? "auto" : "none",
+        willChange: "opacity",
       }}
     >
       {/* =========== TOP: Badge + Name + Tagline =========== */}
@@ -219,8 +220,10 @@ function VariantLayer({
                 <img
                   src={variant.image}
                   alt={variant.fullName}
+                  loading="lazy"
+                  decoding="async"
                   className="relative h-[32vh] w-auto object-contain md:h-[28vh] lg:h-[34vh]"
-                  style={{ filter: `drop-shadow(0 16px 32px ${variant.color}1a)` }}
+                  style={{ filter: `drop-shadow(0 16px 32px ${variant.color}1a)`, willChange: "transform" }}
                 />
               )}
             </div>
@@ -383,9 +386,10 @@ export function VariantsSection() {
   }, [isTouchDevice]);
 
   return (
-    <section ref={sectionRef} className="relative h-[200vh] md:h-[300vh]">
+    <section ref={sectionRef} className="relative h-[180vh] md:h-[300vh]">
       <div
         className="sticky top-0 flex h-dvh flex-col items-center bg-white"
+        style={{ willChange: "transform" }}
         onMouseMove={handleMouseMove}
       >
         {/* FIXED SECTION HEADER */}

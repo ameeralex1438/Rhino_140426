@@ -12,9 +12,10 @@ import { PostHeroSections } from "@/components/sections/home/post-hero-sections"
 /* -------------------------------------------------------------------------- */
 
 const TOTAL_FRAMES = 675;
-const SCROLL_HEIGHT_PER_FRAME = 8; // px of scroll per frame
-const SCROLL_HEIGHT = TOTAL_FRAMES * SCROLL_HEIGHT_PER_FRAME; // 5400px
-const PRELOAD_THRESHOLD = 200; // min frames before unlocking scroll
+const MOBILE_FRAME_STEP = 5; // load every 5th frame on mobile (135 frames vs 675)
+const SCROLL_HEIGHT_DESKTOP = TOTAL_FRAMES * 8; // 5400px
+const SCROLL_HEIGHT_MOBILE = 3200; // shorter scroll on mobile
+const PRELOAD_THRESHOLD = 120; // min frames before unlocking scroll
 
 /* -------------------------------------------------------------------------- */
 /*  ScrollContent — content overlay that fades in/out at scroll positions      */
@@ -253,14 +254,16 @@ export default function Home() {
 
   /* ---- Detect mobile for reduced frame loading ---- */
   const isMobileRef = useRef(false);
+  const scrollHeightRef = useRef(SCROLL_HEIGHT_DESKTOP);
   useEffect(() => {
     isMobileRef.current = window.innerWidth < 768;
+    scrollHeightRef.current = isMobileRef.current ? SCROLL_HEIGHT_MOBILE : SCROLL_HEIGHT_DESKTOP;
   }, []);
 
   /* ---- Preload all frames ---- */
   useEffect(() => {
     const mobile = isMobileRef.current;
-    const step = mobile ? 3 : 1;
+    const step = mobile ? MOBILE_FRAME_STEP : 1;
     const totalToLoad = mobile
       ? Math.ceil(TOTAL_FRAMES / step)
       : TOTAL_FRAMES;
@@ -407,13 +410,13 @@ export default function Home() {
       <LoadingScreen progress={loadProgress} visible={!isLoaded} />
 
       {/* Scroll height spacer */}
-      <div style={{ height: `${SCROLL_HEIGHT}px` }} />
+      <div style={{ height: `${scrollHeightRef.current}px` }} />
 
       {/* Fixed canvas — the video frame viewport */}
       <canvas
         ref={canvasRef}
         className="pointer-events-none fixed inset-0 z-0 h-screen w-screen"
-        style={{ imageRendering: "auto" }}
+        style={{ imageRendering: "auto", willChange: "transform" }}
       />
 
       {/* Dark overlay for text readability */}
