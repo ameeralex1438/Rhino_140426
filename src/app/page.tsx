@@ -252,18 +252,26 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const lastDrawnFrame = useRef(-1);
 
-  /* ---- Detect mobile for reduced frame loading ---- */
+  /* ---- Detect mobile ---- */
   const isMobileRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
   const scrollHeightRef = useRef(SCROLL_HEIGHT_DESKTOP);
   useEffect(() => {
-    isMobileRef.current = window.innerWidth < 768;
-    scrollHeightRef.current = isMobileRef.current ? SCROLL_HEIGHT_MOBILE : SCROLL_HEIGHT_DESKTOP;
+    const mobile = window.innerWidth < 768;
+    isMobileRef.current = mobile;
+    setIsMobile(mobile);
+    scrollHeightRef.current = mobile ? SCROLL_HEIGHT_MOBILE : SCROLL_HEIGHT_DESKTOP;
   }, []);
 
-  /* ---- Preload all frames ---- */
+  /* ---- Preload all frames (desktop only) ---- */
   useEffect(() => {
     const mobile = isMobileRef.current;
-    const step = mobile ? MOBILE_FRAME_STEP : 1;
+    if (mobile) {
+      setIsLoaded(true);
+      setLoadProgress(100);
+      return;
+    }
+    const step = 1;
     const totalToLoad = mobile
       ? Math.ceil(TOTAL_FRAMES / step)
       : TOTAL_FRAMES;
@@ -290,19 +298,7 @@ export default function Home() {
         setLoadProgress(pct);
       };
 
-      // Store at every index for mobile — nearest frame mapping
-      if (mobile) {
-        // Fill in the gaps so any frame index maps to the closest loaded image
-        for (
-          let fill = i - 1;
-          fill < Math.min(i - 1 + step, TOTAL_FRAMES);
-          fill++
-        ) {
-          framesRef.current[fill] = img;
-        }
-      } else {
-        framesRef.current[i - 1] = img;
-      }
+      framesRef.current[i - 1] = img;
     }
   }, []);
 
@@ -406,25 +402,154 @@ export default function Home() {
 
   return (
     <>
-      {/* Loading screen */}
-      <LoadingScreen progress={loadProgress} visible={!isLoaded} />
-
-      {/* Scroll height spacer */}
-      <div style={{ height: `${scrollHeightRef.current}px` }} />
-
-      {/* Fixed canvas — the video frame viewport */}
-      <canvas
-        ref={canvasRef}
-        className="pointer-events-none fixed inset-0 z-0 h-screen w-screen"
-        style={{ imageRendering: "auto", willChange: "transform" }}
-      />
-
-      {/* Dark overlay for text readability */}
-      <div className="pointer-events-none fixed inset-0 z-[1] bg-black/30" />
+      {/* Loading screen (desktop only) */}
+      {!isMobile && <LoadingScreen progress={loadProgress} visible={!isLoaded} />}
 
       {/* ================================================================== */}
-      {/*  CONTENT OVERLAYS                                                   */}
+      {/*  MOBILE HERO — static, no scroll animation                         */}
       {/* ================================================================== */}
+      {isMobile && (
+        <div className="relative">
+          {/* Hero with background image */}
+          <section className="relative flex min-h-[100svh] flex-col items-center justify-center bg-[#111] px-6 py-20 text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/frames/frame-0001.jpg" alt="Rhino Plant" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+            <div className="relative z-10 flex flex-col items-center gap-5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/logos/rhino-logo.svg" alt="Rhino Rock Mineral Wool" className="h-12 w-auto invert" />
+              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-white/70">
+                India&apos;s Greenest Rock Mineral Wool
+              </p>
+              <div className="h-px w-20 bg-gradient-to-r from-transparent via-rhino-orange to-transparent" />
+            </div>
+          </section>
+
+          {/* Plant info */}
+          <section className="relative flex min-h-[60svh] flex-col justify-end bg-[#111] px-6 pb-16">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/frames/frame-0200.jpg" alt="Plant aerial" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+            <div className="relative z-10">
+              <div className="mb-3 flex items-center gap-3">
+                <div className="h-px w-8 bg-rhino-orange" />
+                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-rhino-orange">A Sarda Group Venture</p>
+              </div>
+              <h2 className="font-display text-3xl font-bold leading-tight text-white">281 Acres of <span className="text-white/60">Innovation</span></h2>
+              <p className="mt-2 text-xs text-white/40">Vizianagaram, Andhra Pradesh</p>
+            </div>
+          </section>
+
+          {/* Heritage */}
+          <section className="bg-[#111] px-6 py-16 text-center">
+            <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-rhino-orange">Heritage</p>
+            <h2 className="font-display text-3xl font-bold text-white">90 Years of<br />Industrial Excellence</h2>
+            <div className="mt-8 grid grid-cols-3 gap-4">
+              {[{ value: "\u20B96,000 Cr", label: "Revenue" }, { value: "8,000+", label: "Workforce" }, { value: "60+", label: "Countries" }].map((s) => (
+                <div key={s.label} className="flex flex-col items-center gap-1">
+                  <span className="font-display text-lg font-bold text-white">{s.value}</span>
+                  <span className="text-[9px] uppercase tracking-[0.15em] text-white/40">{s.label}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Zero Fossil Fuels */}
+          <section className="bg-[#0a0a0a] px-6 py-16 text-center">
+            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-rhino-orange/80">Patent Pending Technology</p>
+            <h2 className="font-display text-4xl font-black uppercase leading-none tracking-tight">
+              <span className="bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">ZERO</span>
+              <br />
+              <span className="bg-gradient-to-r from-rhino-orange to-rhino-orange-light bg-clip-text text-transparent">FOSSIL FUELS</span>
+            </h2>
+            <div className="mx-auto mt-5 flex items-center justify-center gap-4 text-white/40">
+              <span className="text-[10px] font-medium uppercase tracking-wider">Zero SO&#x2082;</span>
+              <span className="h-3 w-px bg-white/20" />
+              <span className="text-[10px] font-medium uppercase tracking-wider">Zero NO&#x2093;</span>
+              <span className="h-3 w-px bg-white/20" />
+              <span className="text-[10px] font-medium uppercase tracking-wider">Zero Coke</span>
+            </div>
+          </section>
+
+          {/* 1800°C */}
+          <section className="bg-[#111] px-6 py-16 text-center">
+            <h2 className="font-display text-[56px] font-black leading-none" style={{ background: "linear-gradient(180deg, #FF8800, #FF4400)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              1800&deg;C
+            </h2>
+            <p className="mx-auto mt-3 max-w-xs text-sm text-white/50">Raw volcanic rock transformed into ultra-fine insulation fibers</p>
+          </section>
+
+          {/* Three Variants */}
+          <section className="bg-[#0a0a0a] px-6 py-16 text-center">
+            <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-rhino-orange">Innovation</p>
+            <h2 className="mb-6 font-display text-2xl font-bold text-white">Three Variants. One Revolution.</h2>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <VariantCard name="Elite" reduction={25} color="#FF6600" />
+              <VariantCard name="Enduro" reduction={45} color="#4A4A4A" />
+              <VariantCard name="Eco-Green" reduction={65} color="#00B894" />
+            </div>
+          </section>
+
+          {/* 65% Less CO2 */}
+          <section className="bg-[#111] px-6 py-16 text-center">
+            <h2 className="font-display text-[56px] font-black leading-none" style={{ background: "linear-gradient(180deg, #2DB86E, #1B7A4A)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              65%
+            </h2>
+            <p className="mt-2 text-sm font-medium text-white/70">less CO&#x2082; than conventional insulation</p>
+            <p className="mx-auto mt-3 max-w-sm text-xs text-white/40">Zero SO&#x2082; &middot; Zero NO&#x2093; &middot; Zero Coke &middot; Zero Coal</p>
+          </section>
+
+          {/* Explore + CTA */}
+          <section className="bg-[#0a0a0a] px-6 py-16 text-center">
+            <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-rhino-orange">Products</p>
+            <h2 className="mb-6 font-display text-2xl font-bold text-white">Explore Our Range</h2>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <ProductCard href="/products/rhino-slabs" code="RSL" name="Slabs" />
+              <ProductCard href="/products/rhino-wired-matts" code="RWM" name="Wired Matts" />
+              <ProductCard href="/products/rhino-building-rolls" code="RBR" name="Building Rolls" />
+              <ProductCard href="/products/rhino-rockarmor" code="RRA" name="RockArmor" />
+              <ProductCard href="/products/rhino-loose-wool" code="RLW" name="Loose Wool" />
+            </div>
+
+            <div className="mt-12">
+              <h2 className="mb-6 font-display text-2xl font-bold text-white">
+                Witness the <span className="bg-gradient-to-r from-rhino-orange to-rhino-orange-light bg-clip-text text-transparent">Revolution</span>
+              </h2>
+              <div className="flex flex-col items-center gap-3">
+                <Link href="/technology" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rhino-orange to-rhino-orange-light px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-rhino-orange/30">
+                  Explore Breakthroughs &rarr;
+                </Link>
+                <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-3 text-sm font-semibold text-white">
+                  Get a Quote &rarr;
+                </Link>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {/* ================================================================== */}
+      {/*  DESKTOP HERO — scroll-driven canvas animation                      */}
+      {/* ================================================================== */}
+      {!isMobile && (
+        <>
+          {/* Scroll height spacer */}
+          <div style={{ height: `${scrollHeightRef.current}px` }} />
+
+          {/* Fixed canvas — the video frame viewport */}
+          <canvas
+            ref={canvasRef}
+            className="pointer-events-none fixed inset-0 z-0 h-screen w-screen"
+            style={{ imageRendering: "auto", willChange: "transform" }}
+          />
+
+          {/* Dark overlay for text readability */}
+          <div className="pointer-events-none fixed inset-0 z-[1] bg-black/30" />
+        </>
+      )}
+
+      {/* ================================================================== */}
+      {/*  DESKTOP CONTENT OVERLAYS                                           */}
+      {/* ================================================================== */}
+      {!isMobile && <>
 
       {/* --- 0-5% — OPENING: Logo + tagline (visible immediately) --- */}
       <OpeningContent scrollYProgress={scrollYProgress} />
@@ -683,6 +808,8 @@ export default function Home() {
           </div>
         </div>
       </ScrollContent>
+
+      </>}
 
       {/* ================================================================== */}
       {/*  POST-HERO SECTIONS (after scroll animation ends)                   */}
