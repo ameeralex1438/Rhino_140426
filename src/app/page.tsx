@@ -471,7 +471,7 @@ export default function Home() {
           </h2>
 
           {/* Stats row */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 md:gap-10">
+          <div className="mt-10 grid grid-cols-3 gap-4 md:gap-10">
             {[
               { value: "\u20B96,000 Cr", label: "Revenue" },
               { value: "8,000+", label: "Workforce" },
@@ -481,10 +481,10 @@ export default function Home() {
                 key={stat.label}
                 className="flex flex-col items-center gap-1"
               >
-                <span className="stat-number font-display text-2xl font-bold text-white md:text-3xl">
+                <span className="stat-number font-display text-xl font-bold text-white sm:text-2xl md:text-3xl">
                   {stat.value}
                 </span>
-                <span className="text-xs uppercase tracking-[0.2em] text-white/40 md:text-xs">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 sm:text-xs">
                   {stat.label}
                 </span>
               </div>
