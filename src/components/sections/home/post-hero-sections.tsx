@@ -694,7 +694,7 @@ function OneNationOnePrice() {
           </motion.span>
 
           {/* ONE NATION — supporting line, toned down */}
-          <h2 className="mt-8 text-[2.4rem] leading-[0.95] tracking-tight sm:text-5xl md:text-6xl lg:text-[6.5rem]">
+          <h2 className="mt-8 text-3xl leading-[0.95] tracking-tight sm:text-5xl md:text-6xl lg:text-[6.5rem]">
             {isInView && (
               <DropWord text="ONE NATION" baseDelay={0.2} color="#1a1a1a" shadow="none" fontWeight="font-bold" />
             )}
@@ -704,7 +704,7 @@ function OneNationOnePrice() {
           <div className="my-3 md:my-5" />
 
           {/* ONE PRICE — the hero line */}
-          <h2 className="text-[3.2rem] leading-[0.95] tracking-tight sm:text-7xl md:text-8xl lg:text-[9rem]">
+          <h2 className="text-4xl leading-[0.95] tracking-tight sm:text-7xl md:text-8xl lg:text-[9rem]">
             {isInView && (
               <DropWord text="ONE PRICE" baseDelay={0.9} color="var(--color-rhino-orange)" shadow="none" />
             )}
@@ -712,7 +712,7 @@ function OneNationOnePrice() {
 
           {/* Subtext — more breathing room and larger */}
           <motion.p
-            className="mt-12 max-w-2xl text-base leading-relaxed text-[#777] md:mt-16 md:text-lg md:leading-relaxed"
+            className="mt-12 max-w-2xl px-2 text-sm leading-relaxed text-[#777] sm:px-0 sm:text-base md:mt-16 md:text-lg md:leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
